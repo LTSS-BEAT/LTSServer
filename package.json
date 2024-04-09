@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/Jaehwan-e/ltss_server/issues"
   },
-  "homepage": "https://github.com/Jaehwan-e/ltss_server#readme"
+  "homepage": "https://github.com/Jaehwan-e/ltss_server#readme",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "mysql": "^2.18.1"
+  }
 }

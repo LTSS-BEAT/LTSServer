@@ -12,7 +12,8 @@ CREATE TABLE driver(
     did INT AUTO_INCREMENT, 
     name VARCHAR(32) NOT NULL, 
     contact VARCHAR(11) UNIQUE, 
-    coord VARCHAR(16), 
+    lat VARCHAR(17),
+    lon VARCHAR(17), 
     uid INT NOT NULL, 
     PRIMARY KEY (did), 
     FOREIGN KEY (uid) REFERENCES user(uid) ON DELETE CASCADE
@@ -22,11 +23,15 @@ CREATE TABLE job(
     jid INT, 
     dep VARCHAR(128) NOT NULL, 
     dest VARCHAR(128) NOT NULL, 
-    dep_time TIMESTAMP NOT NULL, 
-    dest_time TIMESTAMP NOT NULL, 
-    dep_coord VARCHAR(16), 
-    dest_coord VARCHAR(16), 
-    time INT, 
+    dep_time_min TIMESTAMP, 
+    dep_time_max TIMESTAMP, 
+    dest_time_min TIMESTAMP, 
+    dest_time_max TIMESTAMP, 
+    dep_lat VARCHAR(17), 
+    dep_lon VARCHAR(17), 
+    dest_lat VARCHAR(17), 
+    dest_lon VARCHAR(17), 
+    j_time INT, 
     uid INT NOT NULL, 
     PRIMARY KEY (jid), 
     FOREIGN KEY (uid) 
@@ -35,6 +40,7 @@ CREATE TABLE job(
 
 CREATE TABLE location(
     name VARCHAR(128), 
-    coordinate VARCHAR(16) NOT NULL, 
+    lat VARCHAR(17) NOT NULL, 
+    lon VARCHAR(17) NOT NULL, 
     PRIMARY KEY (name)
 );

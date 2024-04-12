@@ -1,7 +1,6 @@
 require('dotenv').config();
 const mysql = require('mysql');
 
-// MySQL 연결 설정
 const connection = mysql.createConnection({
     host: process.env.RDS_HOST,
     user: process.env.RDS_USER,
@@ -9,13 +8,12 @@ const connection = mysql.createConnection({
     database: process.env.RDS_DATABASE,
 });
 
-// MySQL 연결
 connection.connect((err) => {
     if (err) {
-        console.error('MySQL 연결 실패:', err);
+        console.error('db error:', err);
         return;
     }
-    console.log('MySQL 연결 성공!');
+    console.log('db connected');
 });
 
 module.exports = connection;

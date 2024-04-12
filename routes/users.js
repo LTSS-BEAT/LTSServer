@@ -1,20 +1,14 @@
+const controllers = require('../controllers');
+
 const express = require('express');
 const router = express.Router();
 
-router.post('/', (req, res) => {
-    res.send('signup user');
-});
+router.post('/', controllers.users.post);
 
-router.delete('/', (req, res) => {
-    res.send('account deleted');
-});
+router.delete('/', controllers.users.delete);
 
-router.post('/signin', (req, res) => {
-    res.send('signin user');
-});
+router.post('/signin', controllers.users.signin);
 
-router.post('/signout', (req, res) => {
-    res.send('signout user');
-});
+router.post('/signout', controllers.users.signout);
 
 module.exports = router;

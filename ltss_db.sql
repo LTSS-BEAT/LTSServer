@@ -25,9 +25,9 @@ CREATE TABLE driver(
 
 CREATE TABLE task(
     tid INT AUTO_INCREMENT, 
-    dep VARCHAR(128) NOT NULL,
+    dep_name VARCHAR(128) NOT NULL,
     dep_adress VARCHAR(128), 
-    dest VARCHAR(128) NOT NULL, 
+    dest_name VARCHAR(128) NOT NULL, 
     dest_adress VARCHAR(128),
     dep_time_min TIMESTAMP, 
     dep_time_max TIMESTAMP, 

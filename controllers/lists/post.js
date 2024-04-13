@@ -10,7 +10,7 @@ module.exports = (req, res, next) => {
     const lists = xlsx.utils.sheet_to_json(xlsxfile.Sheets[xlsxfile.SheetNames[0]]);
     
     const queryData = lists.map((list) => [list.상차지, list.도착지, uid]);
-    const query = 'INSERT INTO task (dep, dest, uid) VALUES ?';
+    const query = 'INSERT INTO task (dep_name, dest_name, uid) VALUES ?';
 
     db.query(query, [queryData], (err, result) => {
         if (err) {

@@ -19,8 +19,13 @@ module.exports = (req, res, next) => {
     })
 
     .then((response) => {
-        console.log('응답 데이터:', response.data);
-        res.send(response.data);
+        const filtered = response.data.documents.map((data) => ({
+            address_name: data.address_name,
+            place_name: data.place_name,
+            lon: data.x,
+            lat: data.y
+        }));
+        res.send({data: filtered});
     })
 
     .catch((error) => {

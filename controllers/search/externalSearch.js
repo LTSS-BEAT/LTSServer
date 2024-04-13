@@ -20,8 +20,8 @@ module.exports = (req, res, next) => {
 
     .then((response) => {
         const filtered = response.data.documents.map((data) => ({
-            address_name: data.address_name,
-            place_name: data.place_name,
+            address: data.address_name,
+            name: data.place_name,
             lon: data.x,
             lat: data.y
         }));

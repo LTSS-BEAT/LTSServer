@@ -1,0 +1,8 @@
+.dropzone {
+    width: 98%;
+    margin: 1%;
+    border: 2px dashed #3498db !important;
+    border-radius: 5px;
+    -webkit-transition: .2s;
+    transition: .2s;
+  }

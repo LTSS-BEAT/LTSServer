@@ -150,10 +150,8 @@
 
                     <!-- Page Heading -->
                     <div class="text-center">
-                        <h1 class="h3 mb-0 text-gray-800">Upload your files</h1>
+                        <h1 class="h3 mb-0 text-gray-800">운송 목록을 올려주세요</h1>
                     </div>
-
-                    <br>
 
                     <form action="/lists" class="dropzone" id="uploadForm"></form>
 
@@ -161,6 +159,63 @@
 
                     <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
                     <script src="js/dropzone.js"></script>
+
+                    <div class="form-group-inline mt-3">
+                        <input type="date" id="selectedDate" class="form-control mt-3" placeholder="날짜를 선택해주세요.">
+                        <button id="submitUpdates" class="btn btn-primary mt-3">Submit Updates</button>
+                    </div>                    
+
+                    <script>
+                        // Handle form submission
+                        document.getElementById("submitUpdates").addEventListener("click", function() {
+                            const selectedDate = document.getElementById('selectedDate').value;
+                            const rows = document.querySelectorAll("#uploadResult table tbody tr");
+                            const data = Array.from(rows).map((row, index) => {
+                                const target = row.getAttribute('data-id');
+                                const depOption = JSON.parse(row.querySelector(`#dep_address-${index} select`).value);
+                                const destOption = JSON.parse(row.querySelector(`#dest_address-${index} select`).value);
+                                const dep_time_min = row.querySelector(`.dep_time_min[data-index="${index}"]`).value;
+                                const dep_time_max = row.querySelector(`.dep_time_max[data-index="${index}"]`).value;
+                                const dest_time_min = row.querySelector(`.dest_time_min[data-index="${index}"]`).value;
+                                const dest_time_max = row.querySelector(`.dest_time_min[data-index="${index}"]`).value;
+
+                                return {
+                                    selectedDate: selectedDate,
+                                    dep_address: depOption.address,
+                                    dep_lat: depOption.latitude,
+                                    dep_lon: depOption.longitude,
+                                    dest_address: destOption.address,
+                                    dest_lat: destOption.latitude,
+                                    dest_lon: destOption.longitude,
+                                    dep_time_min,
+                                    dep_time_max,
+                                    dest_time_min,
+                                    dest_time_max,
+                                    target: target
+                                };
+                            });
+
+                            // Submit the data via fetch or any other method
+                            fetch('/lists', {
+                                method: 'PATCH',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(data)
+                            })
+                            .then(response => response.json())
+                            .then(result => {
+                                if (result.error) {
+                                    throw new Error(result.error);
+                                }
+                                alert('Addresses submitted successfully!');
+                            })
+                            .catch(error => {
+                                console.error("Error submitting addresses:", error);
+                                alert("Failed to submit addresses.");
+                            });
+                        });
+                    </script>
 
                 </div>
                 <!-- /.container-fluid -->

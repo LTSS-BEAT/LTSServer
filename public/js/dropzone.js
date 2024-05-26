@@ -13,9 +13,9 @@ const uploadForm = new Dropzone("#uploadForm", {
                 .then(response => response.json())
                 .then(data => {
                     const resultContainer = document.getElementById("uploadResult");
-                    let html = '<table class="table table-bordered"><thead><tr><th>출발지</th><th>주소</th><th>도착지</th><th>주소</th><th>최소 출발 시간</th><th>최대 출발 시간</th><th>최소 도착 시간</th><th>최대 출발 시간</th></tr></thead><tbody>';
+                    let html = '<table class="table table-bordered"><thead><tr><th>출발지</th><th>주소</th><th>도착지</th><th>주소</th><th>최소 출발 시간</th><th>최대 출발 시간</th><th>최소 도착 시간</th><th>최대 도착 시간</th></tr></thead><tbody>';
                     data.list.forEach((row, index) => {
-                        html += `<tr>
+                        html += `<tr data-id="${row.tid}">
                                     <td>${row['dep_name']}</td>
                                     <td id="dep_address-${index}">`;
                         if (row['dep_address']) {
@@ -52,7 +52,6 @@ const uploadForm = new Dropzone("#uploadForm", {
                     });
 
                     html += '</tbody></table>';
-                    html += `<button id="submitUpdates" class="btn btn-primary mt-3">Submit Updates</button>`;
                     resultContainer.innerHTML = html;
     
                     // Fetch possible locations and addresses separately and populate dropdowns
@@ -68,7 +67,11 @@ const uploadForm = new Dropzone("#uploadForm", {
                                 if (searchData.length > 0) {
                                     searchData.forEach(location => {
                                         const option = document.createElement('option');
-                                        option.value = location;
+                                        option.value = JSON.stringify({
+                                            address: location.address,
+                                            latitude: location.lat,
+                                            longitude: location.lon
+                                        });
                                         option.textContent = location;
                                         dropdown.appendChild(option);
                                     })
@@ -78,7 +81,11 @@ const uploadForm = new Dropzone("#uploadForm", {
                                         .then(searchData => {
                                             searchData.data.forEach(location => {
                                                 const option = document.createElement('option');
-                                                option.value = location.address;
+                                                option.value = JSON.stringify({
+                                                    address: location.address,
+                                                    latitude: location.lat,
+                                                    longitude: location.lon
+                                                });
                                                 option.textContent = location.address;
                                                 dropdown.appendChild(option);
                                             });
@@ -100,7 +107,11 @@ const uploadForm = new Dropzone("#uploadForm", {
                                 if (searchData.length > 0) {
                                     searchData.forEach(location => {
                                         const option = document.createElement('option');
-                                        option.value = location;
+                                        option.value = JSON.stringify({
+                                            address: location.address,
+                                            latitude: location.lat,
+                                            longitude: location.lon
+                                        });
                                         option.textContent = location;
                                         dropdown.appendChild(option);
                                     })
@@ -110,7 +121,11 @@ const uploadForm = new Dropzone("#uploadForm", {
                                         .then(searchData => {
                                             searchData.data.forEach(location => {
                                                 const option = document.createElement('option');
-                                                option.value = location.address;
+                                                option.value = JSON.stringify({
+                                                    address: location.address,
+                                                    latitude: location.lat,
+                                                    longitude: location.lon
+                                                });
                                                 option.textContent = location.address;
                                                 dropdown.appendChild(option);
                                             });

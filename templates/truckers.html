@@ -20,9 +20,6 @@
     <!-- Custom styles for this template -->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
-    <!-- Custom styles for this page -->
-    <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
-
 </head>
 
 <body id="page-top">
@@ -151,15 +148,53 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <!-- Page Heading -->
-                    <h1 class="h3 mb-2 text-gray-800">기사 관리</h1>
+                    <!-- Drivers Table -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">기사 목록</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="driversTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>성명</th>
+                                            <th>차량 번호</th>
+                                            <th>위도</th>
+                                            <th>경도</th>
+                                            <th>연락처</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="driversTableBody">
+                                        <!-- Driver rows will be inserted here by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
 
-                    <h1>Query Results</h1>
-                    <ul>
-                        <% test.forEach(item => { %>
-                            <li><%= item.contact %></li> <!-- Replace "columnName" with the actual column name from your query result -->
-                        <% }); %>
-                    </ul>
+                    <!-- Custom JavaScript to Fetch and Render Drivers -->
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            fetch('/drivers')
+                                .then(response => response.json())
+                                .then(data => {
+                                    const driversTableBody = document.getElementById('driversTableBody');
+                                    data.drivers.forEach(driver => {
+                                        const row = document.createElement('tr');
+                                        row.innerHTML = `
+                                            <td>${driver.name}</td>
+                                            <td>${driver.lpnum}</td>
+                                            <td>${driver.contact}</td>
+                                            <td>${driver.lat}</td>
+                                            <td>${driver.lon}</td>
+                                        `;
+                                        driversTableBody.appendChild(row);
+                                    });
+                                })
+                                .catch(error => console.error('Error fetching drivers:', error));
+                        });
+                    </script>
 
                 </div>
                 <!-- /.container-fluid -->

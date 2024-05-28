@@ -20,9 +20,6 @@
     <!-- Custom styles for this template -->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
-    <!-- Custom styles for this page -->
-    <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
-
 </head>
 
 <body id="page-top">
@@ -154,6 +151,62 @@
                     <!-- Page Heading -->
                     <h1 class="h3 mb-2 text-gray-800">기사 등록</h1>
 
+                    <form id="register-form">
+                        <div class="form-group">
+                            <label for="driverName">성명</label>
+                            <input type="text" class="form-control" id="driverName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="carNumber">차량 번호</label>
+                            <input type="text" class="form-control" id="carNumber" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="address">주소</label>
+                            <input type="text" class="form-control" id="address" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phoneNumber">연락처</label>
+                            <input type="text" class="form-control" id="phoneNumber" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">기사 등록</button>
+                    </form>
+
+                    <script>
+                        document.getElementById('register-form').addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            const driverName = document.getElementById('driverName').value;
+                            const carNumber = document.getElementById('carNumber').value;
+                            const address = document.getElementById('address').value;
+                            const phoneNumber = document.getElementById('phoneNumber').value;
+                
+                            fetch('/drivers', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    name: driverName,
+                                    carNumber: carNumber,
+                                    address: address,
+                                    phoneNumber: phoneNumber
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert('Driver registered successfully!');
+                                    document.getElementById('register-form').reset();
+                                } else {
+                                    alert('Registration failed: ' + data.message);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('An error occurred during registration.');
+                            });
+                        });
+                    </script>
+
                 </div>
                 <!-- /.container-fluid -->
 
@@ -210,13 +263,6 @@
 
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
-
-    <!-- Page level plugins -->
-    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="js/datatables.js"></script>
 
 </body>
 

@@ -8,7 +8,6 @@ module.exports = (req, res, next) => {
             console.error(err);
             return;
         }
-        console.log(result);
         res.send({drivers: result});
     });
 };

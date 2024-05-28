@@ -1,7 +1,14 @@
 module.exports = {
-    lists: require('./lists'),
-    search: require('./search'),
-    users: require('./users'),
-    schedule: require('./schedule'),
     drivers: require('./drivers'),
+    lists: require('./lists'),
+    login: require('./login'),
+    password: require('./password'),
+    register: require('./register'),
+    registerTruckers: require('./registerTruckers'),
+    schedule: require('./schedule'),
+    schedules: require('./schedules'),
+    search: require('./search'),
+    truckers: require('./truckers'),
+    upload: require('./upload'),
+    users: require('./users'),
 }

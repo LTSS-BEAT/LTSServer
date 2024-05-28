@@ -12,30 +12,29 @@ CREATE TABLE user(
 );
 
 CREATE TABLE driver(
-    did INT AUTO_INCREMENT, 
-    name VARCHAR(32),
-    adress VARCHAR(128), 
-    lpnum VARCHAR(8) UNIQUE, 
-    contact VARCHAR(11), 
+    did INT AUTO_INCREMENT,
+    name VARCHAR(32) NOT NULL,
+    lpnum VARCHAR(8) UNIQUE,
+    contact VARCHAR(11) UNIQUE,
     lat VARCHAR(17),
-    lon VARCHAR(17), 
-    uid INT NOT NULL, 
-    PRIMARY KEY (did), 
+    lon VARCHAR(17),
+    uid INT NOT NULL,
+    PRIMARY KEY (did),
     FOREIGN KEY (uid) REFERENCES user(uid) ON DELETE CASCADE
 );
 
 CREATE TABLE task(
     tid INT AUTO_INCREMENT, 
     dep_name VARCHAR(128) NOT NULL,
-    dep_adress VARCHAR(128), 
+    dep_address VARCHAR(128), 
     dest_name VARCHAR(128) NOT NULL, 
-    dest_adress VARCHAR(128),
+    dest_address VARCHAR(128),
     dep_time_min TIMESTAMP, 
     dep_time_max TIMESTAMP, 
     dest_time_min TIMESTAMP, 
     dest_time_max TIMESTAMP, 
     dep_lat VARCHAR(17), 
-    dep_lon VARCHAR(17), 
+    dep_lon VARCHAR(17),
     dest_lat VARCHAR(17), 
     dest_lon VARCHAR(17), 
     t_time INT, 

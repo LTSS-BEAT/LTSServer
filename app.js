@@ -1,4 +1,5 @@
 require('dotenv').config();
+const signoutUsers = {};
 
 const express = require('express');
 const route = require('./routes');

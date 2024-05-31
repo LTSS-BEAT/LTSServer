@@ -5,55 +5,11 @@ const axios = require('axios');
 const util = require('util');
 
 const LOADING_UNLOADING_TIME = 30;
-const SPARE_TIME = 30;
+const SPARE_TIME = 0;
 
-let INITIAL_CANDIDATES_NUM = 5;
+let INITIAL_CANDIDATES_NUM = 8;
 
-async function t (req, res, next) {
-
-    let drivers = await getDrivers();
-    let tasks = await getTasks();
-    const drivers_backup = {...drivers};
-      
-    const numOfDriver = drivers.length;
-    const numOfTasks = tasks.length;
-
-    const iteration = Math.floor(numOfTasks/numOfDriver);
-
-    for (let i = 0; i < iteration; i++) {
-        await getAllTaskCandidates(drivers, tasks, INITIAL_CANDIDATES_NUM);
-        if (distributeTasks(drivers, tasks)) {
-            break;
-        }
-    }
-
-};
-
-async function distributeStep(drivers, tasks, taskCandidateNum) {
-    // 후보의 수가 task의 수보다 많으면 해당 스텝의 결과로 실패 반환
-    if (taskCandidateNum > tasks.length) {
-        console.log('스텝 실패: taskCandidateNum > tasks.length'); //지워
-        return false;
-    }
-
-    // driver에게 candidateNum수만큼의 task 후보 할당
-    await getAllTaskCandidates(drivers, tasks, taskCandidateNum);
-    // task 후보 중에서 모든 driver에게 겹치지 않게 후보 할당
-    const distributeResult = distributeTasks(drivers, tasks);
-
-    // 실패하면 후보의 수를 늘리고 다시 시도
-    if (!distributeResult) {
-        taskCandidateNum++;
-        console.log(`후보수 ${taskCandidateNum}개로 분배 실패`); //지워
-        distributeStep(drivers, tasks, taskCandidateNum);
-    }
-
-    // 성공 시
-    // driver의 정보 업데이트
-    updateAllDriverData(drivers);
-    console.log('스텝 성공'); //지워
-    return true;
-}
+let api_num = 0;
 
 function updateDistributeResult(drivers, tasks, distributeResult) {
     for (let [did, tid] of distributeResult) {
@@ -80,6 +36,7 @@ async function getDrivers() {
             driver.baseLon = driver.lon;
             driver.baseLat = driver.lat;
             driver.baseTime = 0;
+            driver.distanceTodep = 0;
             driver.taskCandidates = [];
             driver.taskCandidatesForDistribution = [];
             driver.assignedTasks = [];
@@ -92,18 +49,19 @@ async function getDrivers() {
     }
 }
 
-async function getTasks() {
+async function getTasks(base_date = '2024-05-02') {
 
     function iterationTotasks(tasks) {
         tasks.forEach(task => {
             task.driverCandidates = [];
+            task.driverCandidatesForDistribution = [];
             task.distanceTodep = 0;
         });
     }
 
     try {
         const tasksQuery = util.promisify(db.query).bind(db);
-        const tasksResult = await tasksQuery('SELECT * FROM task');
+        const tasksResult = await tasksQuery('SELECT * FROM task where base_date = ?',[base_date]);
         await getTimeToDest(tasksResult);
         iterationTotasks(tasksResult)
         return tasksResult;
@@ -131,6 +89,7 @@ async function getTimeToDest(tasks) {
                 params: params,
                 headers: headers
             });
+            api_num++;//지워
             
             const duration = response.data.routes[0].summary.duration;
             task.timeToDest = Math.ceil(duration / 60) + SPARE_TIME;
@@ -179,31 +138,43 @@ async function timeCheck(driver, task) {
         params: params,
         headers: headers
     });
-
-    const timeToDep = Math.ceil((response.data.routes[0].summary.duration)/60) + SPARE_TIME;
-    
-    const arrivalTimeAtDep = baseTime + timeToDep;
-    const completionTimeAtDep = arrivalTimeAtDep + LOADING_UNLOADING_TIME;
-    const arrivalTimeAtDest = completionTimeAtDep + timeToDest;
-    const completionTimeAtDest = arrivalTimeAtDest + LOADING_UNLOADING_TIME;
-    
-    if(completionTimeAtDep<=dep_time_max) {
-        if(completionTimeAtDest<=dest_time_max) {
-            driver.taskTime[task.tid] = {
-                completionTimeAtDest,
-                timeToDep
-            };
-            return true;
+    api_num++;//지워
+    try{
+        let timeToDep = 0;
+        if (response.data.routes[0].result_code == 104) {
+            timeToDep = SPARE_TIME;
+        } else {
+            timeToDep = Math.ceil((response.data.routes[0].summary.duration)/60) + SPARE_TIME;
         }
-    }
-    return false;
+        // const timeToDep = Math.ceil((response.data.routes[0].summary.duration)/60) + SPARE_TIME;
+        
+        const arrivalTimeAtDep = Math.max(baseTime + timeToDep, dep_time_min);
+        const completionTimeAtDep = arrivalTimeAtDep + LOADING_UNLOADING_TIME;
+        const arrivalTimeAtDest = Math.max(completionTimeAtDep + timeToDest, dest_time_min);
+        const completionTimeAtDest = arrivalTimeAtDest + LOADING_UNLOADING_TIME;
+        
+        if(completionTimeAtDep<=dep_time_max) {
+            if(completionTimeAtDest<=dest_time_max) {
+                driver.taskTime[task.tid] = {
+                    completionTimeAtDest,
+                    timeToDep
+                };
+                return true;
+            }
+        }
+        return false;
+
+    } catch (error) {
+        console.error(`driver${driver.did}와 task${task.tid}간의 시간 계산 실패`);
+        console.log(response.data);
+    }   
+    
 }
 
-
-async function getAllTaskCandidates(drivers, tasks, taskCandidatesNum) {
+async function getAllTaskCandidates(drivers, tasks, taskCandidatesNum=INITIAL_CANDIDATES_NUM) {
+    tasks = tasks.filter(task => !drivers.some(driver => driver.assignedTasks.some(assignedTask => assignedTask.tid === task.tid)));
 
     async function getTaskCandidates(driver, tasks, taskCandidatesNum=INITIAL_CANDIDATES_NUM) {
-    
         tasks.forEach(task => {
             const distance = getDistance(driver.baseLat, driver.baseLon, task.dep_lat, task.dep_lon);
             task.distance = distance;
@@ -238,19 +209,46 @@ async function getAllTaskCandidates(drivers, tasks, taskCandidatesNum) {
     for (const driver of drivers) {
         await getTaskCandidates(driver, tasks, taskCandidatesNum);
     }
-
 }
 
-function getDriverCandidates(drivers, task) {
-    drivers.forEach(driver => {
-        const distance = getDistance(driver.baseLat, driver.baseLon, task.dep_lat, task.dep_lon);
-        driver.distanceTodep = distance;
-        task.driverCandidates.push(driver);
-    });
-    task.driverCandidates.sort((a, b) => a.distanceTodep - b.distanceTodep);
 
+async function getAllDriverCandidates(drivers, tasks, driverCandidiatesNum=INITIAL_CANDIDATES_NUM) {
+    async function getDriverCandidates(drivers, task, driverCandidiatesNum=INITIAL_CANDIDATES_NUM) {
+        drivers.forEach(driver => {
+            const distance = getDistance(driver.baseLat, driver.baseLon, task.dep_lat, task.dep_lon);
+            driver.distanceToDep = distance;
+            task.driverCandidates.push(driver);
+        });
+
+        task.driverCandidates.sort((a, b) => a.distanceToDep - b.distanceToDep);
+
+        let num = 0;
+        let index = 0;
+        while (num < driverCandidiatesNum && index < task.driverCandidates.length) {
+            const timeCheckValue = await timeCheck(task.driverCandidates[index], task);
+            if (timeCheckValue) {
+                num++;
+                task.driverCandidatesForDistribution.push(task.driverCandidates[index]);
+            } 
+            index++;
+        }
+        // // 할당된 후보를 taskCandidatesForDistribution에 추가
+        // driver.taskCandidatesForDistribution = driver.taskCandidates.slice(0, taskCandidatesNum);
     
+        console.log(`task ${task.tid}의 후보 driver: ${num}개`); //지워
+        console.log(task.driverCandidatesForDistribution.map(driver => driver.did)); //지워
+        return;
+    }
+
+    if (drivers.length < driverCandidiatesNum) {
+        driverCandidiatesNum = drivers.length;
+    }
+    for (const task of tasks) {
+        await getDriverCandidates(drivers, task, driverCandidiatesNum);
+    }
 }
+
+
 
 
 function distributeTasks(drivers, tasks) {
@@ -294,12 +292,54 @@ function distributeTasks(drivers, tasks) {
     return drivers.map((driver, i) => [driver.did, bestResult.assignedTasks[i].tid]);
 }
 
+function distributeDrivers(drivers, tasks) {
+    const allDistributions = [];
+
+    // 각 드라이버에 대해 재귀적으로 탐색하여 가능한 모든 할당 방식을 생성하는 함수
+    function exploreAssignments(taskIndex, assignedDrivers, totalTimes) {
+        if (taskIndex === tasks.length) {
+            allDistributions.push({ assignedDrivers, totalTimes });
+            return;
+        }
+
+        for (const driver of tasks[taskIndex].driverCandidatesForDistribution) {
+            if (assignedDrivers.some(d => d.did === driver.did)) continue;
+            const newAssignedDrivers = [...assignedDrivers, driver];
+            try {
+                const newTotalTimes = [...totalTimes, driver.taskTime[tasks[taskIndex].tid].timeToDep];
+                exploreAssignments(taskIndex + 1, newAssignedDrivers, newTotalTimes);
+
+            } catch (error) {
+                console.log(`error: ${taskIndex}번 task에 ${driver.did}번 driver 할당 불가`);
+                console.log(`tasks: ${tasks}`);
+            }
+        }
+    }
+
+    exploreAssignments(0, [], []);
+
+    if (allDistributions.length === 0) {
+        return [];
+    }
+
+    allDistributions.sort((a, b) => {
+        const totalA = a.totalTimes.reduce((acc, time) => acc + time, 0);
+        const totalB = b.totalTimes.reduce((acc, time) => acc + time, 0);
+        return totalA - totalB;
+    });
+
+    const bestResult = allDistributions[0];
+
+    return tasks.map((task, i) => [bestResult.assignedDrivers[i].did, task.tid]);
+}
+
 
 
 
 function updateAllDriverData(drivers) {
 
     function updateDriverData(driver) {
+        if(driver.assignedTasks.length==0) return;
         const assignedTaskIndex = driver.assignedTasks.length - 1;
         const assignedLastTask = driver.assignedTasks[assignedTaskIndex];
         const assignedLastTaskId = assignedLastTask.tid;
@@ -317,45 +357,77 @@ function updateAllDriverData(drivers) {
     }
 }
 
+function getLeastPriorityTasks(drivers, tasks) {
+    const result = [];
+    for(const task of tasks) {
+        if (task.dest_time_max > 1440) {
+            result.push(task);
+            const index = tasks.findIndex(t => t.tid === task.tid);
+            tasks.splice(index, 1);
+        }
+    }
+    return result;
+}
+
+function getPriorityTasks(drivers, tasks) {
+    const result = [];
+    for(const task of tasks) {
+        if (task.dest_time_max <= 840) {
+            result.push(task);
+            const index = tasks.findIndex(t => t.tid === task.tid);
+            tasks.splice(index, 1);
+        }
+    }
+    return result;
+}
+
 async function main () {
     let taskCandidatesNum = INITIAL_CANDIDATES_NUM;
 
     // driver와 task 정보 가져오기
     const drivers = await getDrivers();
+    console.log(`get drivers, api 호출 수: ${api_num}`);
     const tasks = await getTasks();
-    
-    // // driver와 task의 수
-    // const numOfDriver = drivers.length;
-    // const numOfTasks = tasks.length;
-    // // driver와 task로 iteration 횟수 계산
-    // const iterationNum = Math.floor(numOfTasks/numOfDriver);
+    console.log(`get tasks, api 호출 수: ${api_num}`);
+    // 우선 할당 작업 탐색
+    const priorityTasks = getPriorityTasks(drivers, tasks);
 
-    // getTaskCandidates(drivers[0], tasks);
-    await getAllTaskCandidates(drivers, tasks, 5);
-    const distributeResult = distributeTasks(drivers, tasks);
-    console.log(JSON.stringify(distributeResult));
-    updateDistributeResult(drivers, tasks, distributeResult);
+    // driver와 task의 수
+    const numOfDriver = drivers.length;
+    const numOfTasks = tasks.length - priorityTasks.length;
+    // driver와 task로 iteration 횟수 계산
+    const iterationNum = Math.floor(numOfTasks / numOfDriver);
+
+    // 우선 할당 작업 분배
+    await getAllDriverCandidates(drivers, priorityTasks, 3);
+    const priorityDistributeResult = distributeDrivers(drivers, priorityTasks);
+    console.log(JSON.stringify(priorityDistributeResult));
+    updateDistributeResult(drivers, priorityTasks, priorityDistributeResult);
     updateAllDriverData(drivers);
+    console.log(`우선분배 스텝까지 api 호출 수: ${api_num}`);
 
-    await getAllTaskCandidates(drivers, tasks, 5);
-    const distributeResult2 = distributeTasks(drivers, tasks);
-    console.log(JSON.stringify(distributeResult2));
-    updateDistributeResult(drivers, tasks, distributeResult2);
-    updateAllDriverData(drivers);
+    for (let i = 0; i < iterationNum; i++) {
+        await getAllTaskCandidates(drivers, tasks, 5);
+        const distributeResult = distributeTasks(drivers, tasks);
+        console.log(JSON.stringify(distributeResult));
+        updateDistributeResult(drivers, tasks, distributeResult);
+        updateAllDriverData(drivers);
+        console.log(`${i + 1}차 분배까지 api 호출 수: ${api_num}`);
+    }
 
-    await getAllTaskCandidates(drivers, tasks, 5);
-    const distributeResult3 = distributeTasks(drivers, tasks);
+    await getAllDriverCandidates(drivers, tasks, 8);
+    const distributeResult3 = distributeDrivers(drivers, tasks);
     console.log(JSON.stringify(distributeResult3));
     updateDistributeResult(drivers, tasks, distributeResult3);
-    updateAllDriverData(drivers);
+    console.log(`api 호출 수: ${api_num}`);
 
+    for (const driver of drivers) {
+        console.log(`driver ${driver.did}에게 할당된 task:`);
+        console.log(driver.assignedTasks.map(task => task.tid));
+    }
 
-    console.log(drivers);
-    console.log(tasks);
     db.end();
     return;
-
 }
 
-
-main()
+main();

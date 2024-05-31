@@ -41,6 +41,12 @@ module.exports = (req, res, next) => {
         const secretKey = process.env.JWT_KEY;
         const token = jwt.sign(payload, secretKey, { expiresIn: '2h' });
 
-        res.send(token);
+        res.send({
+            token,
+            user: {
+                uid: user.uid,
+                email,
+            },
+        });
     });
 };

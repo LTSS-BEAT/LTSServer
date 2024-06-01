@@ -5,6 +5,14 @@ function timeToMinutes(timeString) {
     return (hours * 60) + minutes;
 }
 
+function timeToMinutesDestination(timeStringDep, timeStringDest) {
+    const [hoursDep, minutesDep] = timeStringDep.split(':').map(Number);
+    const departureTime = (hoursDep * 60) + minutesDep
+    const [hoursDest, minutesDest] = timeStringDest.split(':').map(Number);
+    const destinationTime = (hoursDest * 60) + minutesDest;
+    return (departureTime > destinationTime) ? destinationTime + 1440 : destinationTime;
+}
+
 module.exports = (req, res, next) => {
     const queryData = req.body;
 
@@ -33,8 +41,8 @@ module.exports = (req, res, next) => {
             data.dest_address, 
             timeToMinutes(data.dep_time_min), 
             timeToMinutes(data.dep_time_max), 
-            timeToMinutes(data.dest_time_min), 
-            timeToMinutes(data.dest_time_max), 
+            timeToMinutesDestination(data.dep_time_min, data.dest_time_min), 
+            timeToMinutesDestination(data.dep_time_max, data.dest_time_max), 
             data.dep_lat, 
             data.dep_lon, 
             data.dest_lat, 

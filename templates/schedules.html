@@ -74,7 +74,7 @@
                     <i class="fas fa-fw fa-chart-area"></i>
                     <span>기사 등록</span></a>
             </li>
-            
+
             <!-- Nav Item - Truckers -->
             <li class="nav-item">
                 <a class="nav-link" href="/truckers">
@@ -150,6 +150,85 @@
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">일정 관리</h1>
                     </div>
+
+                    <form id="dateForm">
+                        <label for="date">기준 날짜 선택: </label>
+                        <input type="date" id="selectedDate" name="date" required>
+                    </form>
+
+                    <div id="scheduleResult" class="container-fluid"></div>
+
+                    <button id="scheduleCheck" class="btn btn-primary mt-3">일정 확인</button>
+
+                    <script>
+                        document.getElementById("scheduleCheck").addEventListener("click", function () {
+                            const baseDate = document.getElementById("selectedDate").value;
+                            fetch('/drivers/list')
+                                .then(response => response.json())
+                                .then(driverData => {
+                                    // Extract the driver results
+                                    const drivers = driverData.drivers;
+
+                                    // Create a driver map for quick lookup
+                                    const driverMap = drivers.reduce((acc, driver) => {
+                                        acc[driver.did] = driver;
+                                        return acc;
+                                    }, {});
+
+                                    // Now fetch the jobs data
+                                    return fetch(`/lists?date=${baseDate}`)
+                                        .then(response => response.json())
+                                        .then(jobData => {
+                                            const resultContainer = document.getElementById("scheduleResult");
+                                            let html = '<table class="table table-bordered"><thead><tr><td rowspan="2">기사명</td><td rowspan="2">차량 번호</td><th>일정</th><th>출발지</th><th>주소</th><th>도착지</th><th>주소</th></tr></thead><tbody>';
+
+                                            const jobs = jobData.list;
+                                            console.log(jobs);
+
+                                            // Group jobs by driver ID
+                                            const jobsByDriver = jobs.reduce((acc, job) => {
+                                                if (!acc[job.did]) {
+                                                    acc[job.did] = [];
+                                                }
+                                                acc[job.did].push(job);
+                                                return acc;
+                                            }, {});
+
+                                            // Iterate over each driver group and create table rows
+                                            Object.keys(jobsByDriver).forEach(did => {
+                                                const driverJobs = jobsByDriver[did];
+                                                const driver = driverMap[did];
+                                                const driverName = driver.name;
+                                                const carName = driver.lpnum;
+
+                                                driverJobs.sort((a, b) => a.sequence - b.sequence);
+
+                                                driverJobs.forEach((job, index) => {
+                                                    html += '<tr>';
+
+                                                    if (index === 0) {
+                                                        html += `<td rowspan="${driverJobs.length}">${driverName}</td>`;
+                                                        html += `<td rowspan="${driverJobs.length}">${carName}</td>`;
+                                                    }
+
+                                                    html += `<td>${job.sequence}</td>`;
+                                                    html += `<td>${job.dep_name}</td>`;
+                                                    html += `<td>${job.dep_address}</td>`;
+                                                    html += `<td>${job.dest_name}</td>`;
+                                                    html += `<td>${job.dest_address}</td>`; 
+                                                    html += '</tr>';
+                                                });
+                                            });
+
+                                            html += '</tbody></table>';
+                                            resultContainer.innerHTML = html;
+                                        });
+                                })
+                                .catch(error => {
+                                    console.error('Error fetching data:', error);
+                                });
+                        });
+                    </script>
 
                 </div>
                 <!-- /.container-fluid -->

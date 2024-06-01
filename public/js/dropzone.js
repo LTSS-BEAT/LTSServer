@@ -9,7 +9,8 @@ const uploadForm = new Dropzone("#uploadForm", {
     init: function() {
         this.on("success", function(file, response) {
             // Make a GET request to fetch the uploaded file's data
-            fetch('/lists')
+            const basedate = document.getElementById("selectedDate").value;
+            fetch(`/lists?date=${basedate}`)
                 .then(response => response.json())
                 .then(data => {
                     const resultContainer = document.getElementById("uploadResult");

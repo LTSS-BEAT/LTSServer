@@ -16,7 +16,8 @@ let api_num = 0;
 
 // 메인 함수
 module.exports = async (req, res, next) => {
-    const base_date = req.body.base_date;
+    const base_date = req.body.selectedDate;
+    console.log('Received date: ', base_date);
     try {
         // driver와 task 정보 가져오기
         const drivers = await getDrivers();

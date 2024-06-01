@@ -37,7 +37,6 @@ CREATE TABLE task(
     dep_lon VARCHAR(17),
     dest_lat VARCHAR(17), 
     dest_lon VARCHAR(17), 
-    t_time INT, 
     r_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     uid INT NOT NULL, 
     PRIMARY KEY (tid), 

@@ -18,11 +18,11 @@ module.exports = (req, res, next) => {
 
     // Convert sheet to JSON and transform date fields
     const lists = xlsx.utils.sheet_to_json(worksheet, { raw: true }).map(row => {
-    if (row['작업일자'] && typeof row['작업일자'] === 'number') {
-        row['작업일자'] = excelDateToJSDate(row['작업일자']);
-    }
-    return row;
-});
+        if (row['작업일자'] && typeof row['작업일자'] === 'number') {
+            row['작업일자'] = excelDateToJSDate(row['작업일자']);
+        }
+        return row;
+    });
 
     
     const queryData = lists.map((list) => [list.상차지, list.도착지, list.작업일자, uid]);

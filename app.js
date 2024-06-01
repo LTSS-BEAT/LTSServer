@@ -10,7 +10,10 @@ const app = express();
 const port = process.env.PORT;
 
 
-app.use(cors());
+app.use(cors({
+    origin: '*',
+    exposedHeaders: ['Referrer'],
+  }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 

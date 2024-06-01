@@ -1,13 +1,13 @@
 /*!40101 SET NAMES utf8mb4 */;
 
-DROP DATABASE IF EXISTS ltss_db_test2;
-CREATE DATABASE ltss_db_test2;
-use ltss_db_test2;
+DROP DATABASE IF EXISTS ltss_db_test;
+CREATE DATABASE ltss_db_test;
+use ltss_db_test;
 
 CREATE TABLE user(
     uid INT AUTO_INCREMENT, 
     email VARCHAR(128) NOT NULL, 
-    pwd VARCHAR(32) NOT NULL, 
+    pwd VARCHAR(128) NOT NULL, 
     PRIMARY KEY (uid)
 );
 
@@ -58,7 +58,7 @@ CREATE TABLE place(
     PRIMARY KEY (pid)
 );
 
-INSERT INTO user (email, pwd) VALUES ('test@test.com', '0000');
+INSERT INTO user (email, pwd) VALUES ('test@test.com', '$2b$10$5cwlCGjb.uQZ8CS1xcf6JOh2ZOAqzhVQcnRVicpbIhx4QFZLa6emK');
 
 INSERT INTO place (name, adress, lon, lat) VALUES 
 ('평택서부두', '경기 평택시 포승읍 신영리 671', '126.885935193061', '36.9390447587094'),

@@ -16,6 +16,7 @@ module.exports = (req, res, next) => {
             return res.status(500).json({ success: false, message: 'Error hashing password' });
         }
 
+        console.log(hashedPassword);
         const query = 'INSERT INTO user (email, pwd) VALUES (?, ?)';
         db.query(query, [email, hashedPassword], (err, result) => {
             if (err) {

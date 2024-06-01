@@ -5,19 +5,20 @@ const jwt = require('jsonwebtoken');
 const db = require('../../db');
 
 module.exports = (req, res, next) => {
+    const signoutUsers = global.signoutUsers;
     const email = req.body.user.email;
     const password = req.body.user.pwd;
-
+    console.log(email, password)
     const query = 'SELECT uid, pwd FROM user WHERE email = ?';
     db.query(query, [email], async (err, results) => {
         if (err) {
             console.error(err);
             return res.sendStatus(500);
         }
-
+        console.log(results)
         if (results.length === 0) {
             // 사용자가 존재하지 않을 때
-            return res.status(401).json({ error: 'Invalid email or password' });
+            return res.status(401).json({ error: 'does not exist email or password' });
         }
 
         const user = results[0];

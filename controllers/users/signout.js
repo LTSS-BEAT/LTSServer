@@ -1,5 +1,6 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
+const signoutUsers = global.signoutUsers;
 
 module.exports = (req, res, next) => {
     const token = req.headers['authorization'];

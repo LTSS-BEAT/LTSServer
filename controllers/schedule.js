@@ -62,6 +62,7 @@ module.exports = async (req, res, next) => {
             result[driver.did] = driver.assignedTasks.map(task => task.tid);
         }
         console.log(result);
+        updateDatabase(drivers, tasks);
         res.send({result});
     }
     catch (error) {
@@ -438,4 +439,13 @@ function getPriorityTasks(drivers, tasks) {
         }
     }
     return result;
+}
+
+function updateDatabase(drivers, tasks) {
+    const query = 'UPDATE task SET did = ?, sequence = ? WHERE tid = ?';
+    for (const driver of drivers) {
+        for (let i = 0; i < driver.assignedTasks.length; i++) {
+            db.query(query, [driver.did, i, driver.assignedTasks[i].tid]);
+        }
+    }
 }

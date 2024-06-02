@@ -4,8 +4,7 @@ const fs = require('fs');
 const xlsx = require('xlsx');
 
 module.exports = (req, res, next) => {
-    const uid = 1;
-    
+    const uid = parseInt(req.body.uid);
     const xlsxFile = xlsx.readFile(path.join('temp', req.file.originalname));
     const sheetName = xlsxFile.SheetNames[0];
     const worksheet = xlsxFile.Sheets[sheetName];

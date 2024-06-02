@@ -210,12 +210,16 @@
                                     if (result.error) {
                                         throw new Error(result.error);
                                     }
+                                    const userId = localStorage.getItem('uid');
                                     fetch('/schedule', {
                                         method: 'POST',
                                         headers: {
                                             'Content-Type': 'application/json'
                                         },
-                                        body: JSON.stringify({ selectedDate: selectedDate })
+                                        body: JSON.stringify({
+                                            selectedDate: selectedDate,
+                                            uid: userId
+                                        })
                                     })
                                         .then(response => response.json())
                                         .then(result => {

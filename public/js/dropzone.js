@@ -6,8 +6,12 @@ const uploadForm = new Dropzone("#uploadForm", {
     dictDefaultMessage: '일정 생성을 위한 운송 목록을 올려주세요',
     paramName: 'file', // The name that will be used to transfer the file
 
-    init: function() {
-        this.on("success", function(file, response) {
+    init: function () {
+        this.on("sending", function (file, xhr, formData) {
+            formData.append("uid", localStorage.getItem('uid'));
+            console.log(formData);
+        });
+        this.on("success", function (file, response) {
             // Make a GET request to fetch the uploaded file's data
             const basedate = document.getElementById("selectedDate").value;
             fetch(`/lists?date=${basedate}`)
@@ -54,12 +58,12 @@ const uploadForm = new Dropzone("#uploadForm", {
 
                     html += '</tbody></table>';
                     resultContainer.innerHTML = html;
-    
+
                     // Fetch possible locations and addresses separately and populate dropdowns
                     data.list.forEach((row, index) => {
                         const departure = row['dep_name'];
                         const destination = row['dest_name'];
-    
+
                         // Fetch possible locations for departure
                         fetch(`/search/internal?keyword=${departure}`)
                             .then(res => res.json())
@@ -99,7 +103,7 @@ const uploadForm = new Dropzone("#uploadForm", {
                             .catch(error => {
                                 console.error(`Error fetching locations for ${departure} from internalSearch:`, error);
                             })
-    
+
                         // Fetch possible locations for departure
                         fetch(`/search/internal?keyword=${destination}`)
                             .then(res => res.json())

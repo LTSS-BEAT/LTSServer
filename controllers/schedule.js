@@ -16,6 +16,8 @@ let api_num = 0;
 
 // 메인 함수
 module.exports = async (req, res, next) => {
+    console.time('Execution Time');
+
     const base_date = req.body.selectedDate;
     console.log('Received date: ', base_date);
     try {
@@ -65,6 +67,7 @@ module.exports = async (req, res, next) => {
         console.log(result);
         updateDatabase(drivers, tasks);
         res.send({result});
+        console.timeEnd('Execution Time');
     }
     catch (error) {
         res.sendStatus(500);

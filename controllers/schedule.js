@@ -18,12 +18,13 @@ let api_num = 0;
 module.exports = async (req, res, next) => {
     console.time('Execution Time');
 
+    const uid = req.body.uid? req.body.uid : 1;
     const base_date = req.body.selectedDate;
     console.log('Received date: ', base_date);
     try {
         // driver와 task 정보 가져오기
-        const drivers = await getDrivers();
-        const tasks = await getTasks(base_date);
+        const drivers = await getDrivers(uid);
+        const tasks = await getTasks(uid, base_date);
         const tasks_backup = JSON.parse(JSON.stringify(tasks));
         
         // 우선 할당 작업 탐색
@@ -92,10 +93,10 @@ function updateDistributeResult(drivers, tasks, distributeResult) {
     }
 }
 
-async function getDrivers() {
+async function getDrivers(uid) {
     try {
         const driversQuery = util.promisify(db.query).bind(db);
-        const driversResult = await driversQuery('SELECT * FROM driver');
+        const driversResult = await driversQuery('SELECT * FROM driver where uid = ?',[uid]);
         driversResult.forEach(driver => {
             driver.baseLon = driver.lon;
             driver.baseLat = driver.lat;
@@ -113,7 +114,7 @@ async function getDrivers() {
     }
 }
 
-async function getTasks(base_date) {
+async function getTasks(uid, base_date) {
 
     function iterationTotasks(tasks) {
         tasks.forEach(task => {
@@ -125,7 +126,7 @@ async function getTasks(base_date) {
 
     try {
         const tasksQuery = util.promisify(db.query).bind(db);
-        const tasksResult = await tasksQuery('SELECT * FROM task where base_date = ?',[base_date]);
+        const tasksResult = await tasksQuery('SELECT * FROM task where uid = ? and base_date = ?',[uid, base_date]);
         await getTimeToDest(tasksResult);
         iterationTotasks(tasksResult)
         return tasksResult;

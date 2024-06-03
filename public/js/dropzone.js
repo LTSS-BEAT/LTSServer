@@ -7,10 +7,6 @@ const uploadForm = new Dropzone("#uploadForm", {
     paramName: 'file', // The name that will be used to transfer the file
 
     init: function () {
-        this.on("sending", function (file, xhr, formData) {
-            formData.append("uid", localStorage.getItem('uid'));
-            console.log(formData);
-        });
         this.on("success", function (file, response) {
             // Make a GET request to fetch the uploaded file's data
             const basedate = document.getElementById("selectedDate").value;

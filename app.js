@@ -17,6 +17,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/map', route.map);
 app.use('/drivers', route.drivers);
 app.use('/lists', route.lists);
 app.use('/login', route.login);

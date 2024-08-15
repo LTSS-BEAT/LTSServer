@@ -3,5 +3,6 @@ module.exports = {
     users: require('./users/index.js'),
     drivers: require('./drivers/index.js'),
     search: require('./search/index.js'),
-    schedule: require('./schedule.js')
+    schedule: require('./schedule.js'),
+    map: require('./map.js'),
 }

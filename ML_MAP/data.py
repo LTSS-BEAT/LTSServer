@@ -76,8 +76,7 @@ def insert_excluded_data(data):
         excluded.append(data)
     
     except Error as e:
-        print(f"excluded insert failed!: 
-              {e}")
+        print(f"excluded insert failed!: {e}")
         
 
 def insert_included_data(data):
@@ -96,8 +95,7 @@ def insert_included_data(data):
         connection.commit()
     
     except Error as e:
-        print(f"included insert failed!: 
-              {e}")
+        print(f"included insert failed!: {e}")
 
 
 

@@ -10,7 +10,7 @@ from mysql.connector import Error
 import os
 
 # 반복
-ITERATION_NUM = 90000
+ITERATION_NUM = 9800
 
 # 전역 데이터베이스 연결 변수
 connection = None

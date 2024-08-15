@@ -76,7 +76,28 @@ def insert_excluded_data(data):
         excluded.append(data)
     
     except Error as e:
-        print(f"데이터 삽입 오류: {e}")
+        print(f"excluded insert failed!: 
+              {e}")
+        
+
+def insert_included_data(data):
+    global cursor, connection
+    try:
+        # 데이터 삽입 쿼리
+        insert_query = f"""
+            INSERT INTO included (x, y)
+            VALUES (%s, %s)
+        """
+        
+        # 데이터 삽입
+        cursor.execute(insert_query, data)
+        
+        # 변경 사항 커밋
+        connection.commit()
+    
+    except Error as e:
+        print(f"included insert failed!: 
+              {e}")
 
 
 
@@ -159,6 +180,7 @@ def get_excluded():
         print(f"데이터 조회 오류: {e}")
         return None
 
+
 def generate_random_coordinates():
     global excluded
 
@@ -191,6 +213,8 @@ for i in range(ITERATION_NUM):
     if duration:
         data_to_insert = (dep_lon, dep_lat, dest_lon, dest_lat, duration)
         insert_map_data(data_to_insert)
+        insert_included_data((dep_lon, dep_lat))
+        insert_included_data((dest_lon, dest_lat))
         print(f"input data: {data_to_insert}")
 
 # 데이터베이스 종료

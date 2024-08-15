@@ -20,5 +20,11 @@ CREATE TABLE excluded (
     PRIMARY KEY (x, y)
 );
 
+CREATE TABLE included (
+    x VARCHAR(6) NOT NULL,
+    y VARCHAR(5) NOT NULL,
+    PRIMARY KEY (x, y)
+);
+
 /* 34.3, 38.4*/
 /* 126.1, 129.55*/

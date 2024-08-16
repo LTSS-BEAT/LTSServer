@@ -57,6 +57,7 @@ def fetch_data():
 
     return included_data, excluded_data
 
+
 def preprocess_data(included_data, excluded_data):
     X = []
     y = []
@@ -70,6 +71,7 @@ def preprocess_data(included_data, excluded_data):
         y.append(0)  # excluded는 0으로 라벨링
 
     return X, y
+
 
 def train_model(X, y):
     # 데이터를 학습용과 테스트용으로 분리
@@ -125,7 +127,7 @@ def insert_map_data(data):
 
 
 def insert_excluded_data(data):
-    global cursor, connection, excluded
+    global cursor, connection
     try:
         # 데이터 삽입 쿼리
         insert_query = f"""
@@ -138,7 +140,6 @@ def insert_excluded_data(data):
         
         # 변경 사항 커밋
         connection.commit()
-        excluded.append(data)
     
     except Error as e:
         print(f"excluded insert failed!: {e}")
@@ -226,27 +227,7 @@ def get_duration(dep_lon, dep_lat, dest_lon, dest_lat):
             print("응답 본문:", response.text)
             
 
-def get_excluded():
-    global cursor
-    query = 'select * from excluded'
-    try:
-        # 쿼리 실행
-        cursor.execute(query)
-        
-        # 결과 가져오기
-        results = cursor.fetchall()
-        
-        # 결과 반환
-        return results
-    
-    except Error as e:
-        print(f"데이터 조회 오류: {e}")
-        return None
-
-
 def generate_random_coordinates():
-    global excluded
-
     # 한계 범위
     y_min, y_max = 34.3, 38.4
     x_min, x_max = 126.1, 129.55
@@ -263,15 +244,10 @@ def generate_random_coordinates():
     return (x, y)
 
 
-# 데이터베이스 연결
+# 메인 코드
 initialize_database_connection()
 
-excluded = get_excluded()
-
-included_data, excluded_data = fetch_data()
-X, y = preprocess_data(included_data, excluded_data)
-
-model = train_model(X, y)
+model = update_model()
 
 for i in range(ITERATION_NUM):
     print('-------------------------------------------------')
@@ -288,11 +264,9 @@ for i in range(ITERATION_NUM):
         insert_included_data((dest_lon, dest_lat))
         print(f"input data: {data_to_insert}")
 
-    if i % 1000 == 0:
+    if i % 1000 == 999:
         model = update_model()
 
-
-# 데이터베이스 종료
 close_database_connection()
 
 

@@ -264,7 +264,9 @@ for i in range(ITERATION_NUM):
         insert_included_data((dest_lon, dest_lat))
         print(f"input data: {data_to_insert}")
 
-    if i % 1000 == 999:
+    if i % 500 == 0:
+        if i == 0:
+            continue
         model = update_model()
 
 close_database_connection()

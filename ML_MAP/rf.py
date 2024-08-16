@@ -13,7 +13,7 @@ from mysql.connector import Error
 import os
 
 # 반복
-ITERATION_NUM = 8000
+ITERATION_NUM = 9800
 
 # 전역 데이터베이스 연결 변수
 connection = None
@@ -30,18 +30,18 @@ def initialize_database_connection():
         )
         
         if connection.is_connected():
-            print("MySQL 연결 성공")
+            print("MySQL connected")
             cursor = connection.cursor()
     
     except Error as e:
-        print(f"데이터베이스 연결 오류: {e}")
+        print(f"mysql connection error: {e}")
 
 def close_database_connection():
     global connection, cursor
     if connection and connection.is_connected():
         cursor.close()
         connection.close()
-        print("MySQL 연결 종료")
+        print("MySQL connection closed")
 
 
 def fetch_data():
@@ -84,7 +84,7 @@ def train_model(X, y):
 
     # 모델 정확도 출력
     accuracy = accuracy_score(y_test, y_pred)
-    print(f"랜덤 포레스트 모델 정확도: {accuracy:.2f}")
+    print(f"random forest model accuracy: {accuracy:.2f}")
 
     return model
 
@@ -92,6 +92,17 @@ def train_model(X, y):
 def predict(model, x, y):
     return model.predict([[float(x), float(y)]])[0]
 
+
+def update_model():
+    print('-' * 50)
+
+    included_data, excluded_data = fetch_data()
+    X, y = preprocess_data(included_data, excluded_data)
+    model = train_model(X, y)
+
+    print('random forest model updated!')
+
+    return model
 
 
 def insert_map_data(data):
@@ -281,9 +292,12 @@ for i in range(ITERATION_NUM):
         insert_included_data((dest_lon, dest_lat))
         print(f"input data: {data_to_insert}")
 
+    if i % 1000 == 0:
+        model = update_model()
+
+
 # 데이터베이스 종료
 close_database_connection()
-print (excluded)
 
 
 

@@ -259,10 +259,6 @@ def generate_random_coordinates():
     if (prediction == 0):
         print("random forest model: excluded!")
         x, y = generate_random_coordinates()
-
-    if ((x, y) in excluded):
-        print("excluded data: excluded!")
-        x, y = generate_random_coordinates()
     
     return (x, y)
 

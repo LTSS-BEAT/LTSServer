@@ -261,8 +261,6 @@ initialize_database_connection()
 
 excluded = get_excluded()
 
-initialize_database_connection()
-
 included_data, excluded_data = fetch_data()
 X, y = preprocess_data(included_data, excluded_data)
 

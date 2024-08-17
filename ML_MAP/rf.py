@@ -1,6 +1,6 @@
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score
 
 import random
 import requests
@@ -12,8 +12,11 @@ import mysql.connector
 from mysql.connector import Error
 import os
 
-# 반복
-ITERATION_NUM = 9800
+
+# 전역 변수
+THRESHOLD = 0.001
+ITERATION_NUM = 8000
+
 
 # 전역 데이터베이스 연결 변수
 connection = None
@@ -82,17 +85,24 @@ def train_model(X, y):
     model.fit(X_train, y_train)
 
     # 테스트 데이터로 예측 수행
-    y_pred = model.predict(X_test)
+    y_proba = model.predict_proba(X_test)[:, 1]
+    y_pred = (y_proba >= THRESHOLD).astype(int)  # 전역 threshold 기준을 사용
 
-    # 모델 정확도 출력
+    # 모델 성능 출력
     accuracy = accuracy_score(y_test, y_pred)
-    print(f"random forest model accuracy: {accuracy:.2f}")
+    precision = precision_score(y_test, y_pred)
+    recall = recall_score(y_test, y_pred)
+    print(f"Model accuracy: {accuracy:.2f}")
+    print(f"Model precision: {precision:.2f}")
+    print(f"Model recall: {recall:.2f}")
 
     return model
 
 
 def predict(model, x, y):
-    return model.predict([[float(x), float(y)]])[0]
+    proba = model.predict_proba([[float(x), float(y)]])[0][1]
+    return 1 if proba >= THRESHOLD else 0  # 전역 threshold 사용하여 예측
+
 
 
 def update_model():
@@ -127,7 +137,7 @@ def insert_map_data(data):
 
 
 def insert_excluded_data(data):
-    global cursor, connection
+    global cursor, connection#, excluded
     try:
         # 데이터 삽입 쿼리
         insert_query = f"""
@@ -140,6 +150,7 @@ def insert_excluded_data(data):
         
         # 변경 사항 커밋
         connection.commit()
+        # excluded.append(data)
     
     except Error as e:
         print(f"excluded insert failed!: {e}")
@@ -228,6 +239,8 @@ def get_duration(dep_lon, dep_lat, dest_lon, dest_lat):
             
 
 def generate_random_coordinates():
+    # global excluded, model
+
     # 한계 범위
     y_min, y_max = 34.3, 38.4
     x_min, x_max = 126.1, 129.55
@@ -240,12 +253,36 @@ def generate_random_coordinates():
     if (prediction == 0):
         print("random forest model: excluded!")
         x, y = generate_random_coordinates()
-    
+
+    # if ((x, y) in excluded):
+    #     print("excluded data: excluded!")
+    #     x, y = generate_random_coordinates()
+
     return (x, y)
+
+
+# def get_excluded():
+#     global cursor
+#     query = 'select * from excluded'
+#     try:
+#         # 쿼리 실행
+#         cursor.execute(query)
+
+#         # 결과 가져오기
+#         results = cursor.fetchall()
+
+#         # 결과 반환
+#         return results
+
+#     except Error as e:
+#         print(f"데이터 조회 오류: {e}")
+#         return None
 
 
 # 메인 코드
 initialize_database_connection()
+
+# excluded = get_excluded()
 
 model = update_model()
 

@@ -5,9 +5,9 @@ import mysql.connector
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import Dense
+
 
 # 1. 데이터베이스 연결 설정
 def initialize_database_connection():
@@ -44,21 +44,34 @@ def fetch_data_from_db():
 
 # 3. 데이터 전처리
 def preprocess_data(df):
+    # 데이터 타입 변환
     df['dep_x'] = df['dep_x'].astype(float)
     df['dep_y'] = df['dep_y'].astype(float)
     df['dest_x'] = df['dest_x'].astype(float)
     df['dest_y'] = df['dest_y'].astype(float)
     
+    # 입력 특성(X)과 목표 변수(y) 분리
     X = df[['dep_x', 'dep_y', 'dest_x', 'dest_y']].values
     y = df['duration'].values
     
+    # 학습 데이터와 테스트 데이터로 분할
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
-    scaler = StandardScaler()
-    X_train = scaler.fit_transform(X_train)
-    X_test = scaler.transform(X_test)
+    # 수동으로 정의된 최소 및 최대값
+    min_values = np.array([126.1, 34.3, 126.1, 34.3])
+    max_values = np.array([129.55, 38.4, 129.55, 38.4])
+
+    # Min-Max 정규화 수행 (입력 데이터)
+    X_train = (X_train - min_values) / (max_values - min_values)
+    X_test = (X_test - min_values) / (max_values - min_values)
     
-    return X_train, X_test, y_train, y_test
+    # 출력 데이터 정규화
+    y_min = 0     # 주어진 duration의 최소값
+    y_max = 100000 # 주어진 duration의 최대값
+    y_train = (y_train - y_min) / (y_max - y_min)
+    y_test = (y_test - y_min) / (y_max - y_min)
+    
+    return X_train, X_test, y_train, y_test, y_min, y_max
 
 # 4. 모델 생성
 def create_model():
@@ -90,17 +103,23 @@ def main(save_model_flag=True, load_model_flag=False):
         return
     
     df = fetch_data_from_db()
-    X_train, X_test, y_train, y_test = preprocess_data(df)
+    X_train, X_test, y_train, y_test, y_min, y_max = preprocess_data(df)
     
     if load_model_flag:
         model = load_existing_model("model.h5")
     else:
         model = create_model()
     
-    model.fit(X_train, y_train, epochs=50, batch_size=32, validation_split=0.2)
+    model.fit(X_train, y_train, epochs=30, batch_size=32, validation_split=0.2)
     
     loss, mae = model.evaluate(X_test, y_test)
-    print(f"테스트 손실: {loss}, 테스트 MAE: {mae}")
+    
+    # 원래 스케일로 변환
+    loss_original = loss * (y_max - y_min) ** 2
+    mae_original = mae * (y_max - y_min)
+    
+    print(f"정규화된 테스트 손실: {loss}, 테스트 MAE: {mae}")
+    print(f"원래 스케일의 테스트 손실: {loss_original}, 테스트 MAE: {mae_original}")
     
     if save_model_flag:
         save_model(model, "model.h5")
@@ -112,5 +131,3 @@ def main(save_model_flag=True, load_model_flag=False):
 
 if __name__ == "__main__":
     main(save_model_flag=True, load_model_flag=False)
-
-

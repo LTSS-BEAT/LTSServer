@@ -15,7 +15,7 @@ import os
 
 # 전역 변수
 THRESHOLD = 0.001
-ITERATION_NUM = 8000
+ITERATION_NUM = 10000
 
 
 # 전역 데이터베이스 연결 변수
@@ -24,10 +24,12 @@ cursor = None
 
 def initialize_database_connection():
     global connection, cursor
+
+    print('-' * 50)
     try:
         connection = mysql.connector.connect(
             host=os.getenv('RDS_HOST'),
-            database='map_db',
+            database=os.getenv('RDS_DB_ML'),
             user=os.getenv('RDS_USER'),
             password=os.getenv('RDS_PASSWORD')
         )
@@ -92,9 +94,9 @@ def train_model(X, y):
     accuracy = accuracy_score(y_test, y_pred)
     precision = precision_score(y_test, y_pred)
     recall = recall_score(y_test, y_pred)
-    print(f"Model accuracy: {accuracy:.2f}")
-    print(f"Model precision: {precision:.2f}")
-    print(f"Model recall: {recall:.2f}")
+    print(f"Model accuracy: {accuracy:.3f}")
+    print(f"Model precision: {precision:.3f}")
+    print(f"Model recall: {recall:.3f}")
 
     return model
 
@@ -246,8 +248,8 @@ def generate_random_coordinates():
     x_min, x_max = 126.1, 129.55
     
     # 랜덤한 y와 x 값 생성
-    y = round(random.uniform(y_min, y_max), 2)
-    x = round(random.uniform(x_min, x_max), 2)
+    y = round(random.uniform(y_min, y_max), 4)
+    x = round(random.uniform(x_min, x_max), 4)
 
     prediction = predict(model, x, y)
     if (prediction == 0):
@@ -287,7 +289,7 @@ initialize_database_connection()
 model = update_model()
 
 for i in range(ITERATION_NUM):
-    print('-------------------------------------------------')
+    print('-' * 50)
     print(f"iteration {i+1}/{ITERATION_NUM}")
     dep_lon, dep_lat = generate_random_coordinates()
     dest_lon, dest_lat = generate_random_coordinates()
@@ -301,9 +303,7 @@ for i in range(ITERATION_NUM):
         insert_included_data((dest_lon, dest_lat))
         print(f"input data: {data_to_insert}")
 
-    if i % 500 == 0:
-        if i == 0:
-            continue
+    if ((i+1) % 500 == 0):
         model = update_model()
 
 close_database_connection()

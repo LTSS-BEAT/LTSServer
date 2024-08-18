@@ -1,0 +1,7 @@
+mysql_connector_repackaged
+numpy
+pandas
+python-dotenv
+Requests
+scikit_learn
+tensorflow

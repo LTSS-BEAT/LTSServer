@@ -15,7 +15,7 @@ def initialize_database_connection():
     try:
         connection = mysql.connector.connect(
             host=os.getenv('RDS_HOST'),
-            database='map_db',
+            database=os.getenv('RDS_DB_ML'),
             user=os.getenv('RDS_USER'),
             password=os.getenv('RDS_PASSWORD')
         )
@@ -85,7 +85,7 @@ def create_model():
 
 # 5. 모델 저장
 def save_model(model, filename="model.h5"):
-    model.save(filename)
+    model.save(filename, include_optimizer=False)
     print(f"모델이 {filename} 파일로 저장되었습니다.")
 
 # 6. 모델 불러오기

@@ -1,280 +1,506 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
 
     <title>BEAT</title>
 
     <!-- Custom fonts for this template-->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
+      href="vendor/fontawesome-free/css/all.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet"
+    />
 
     <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="css/sb-admin-2.min.css" rel="stylesheet" />
+  </head>
 
-</head>
-
-<body id="page-top">
-
+  <body id="page-top">
     <!-- Page Wrapper -->
     <div id="wrapper">
+      <!-- Sidebar -->
+      <ul
+        class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
+        id="accordionSidebar"
+      >
+        <!-- Sidebar - Brand -->
+        <a
+          class="sidebar-brand d-flex align-items-center justify-content-center"
+          href="/upload"
+        >
+          <div class="sidebar-brand-text mx-3">BEAT</div>
+        </a>
 
-        <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+        <!-- Divider -->
+        <hr class="sidebar-divider my-0" />
 
-            <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/upload">
-                <div class="sidebar-brand-text mx-3">BEAT</div>
-            </a>
+        <!-- Divider -->
+        <hr class="sidebar-divider" />
 
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
+        <!-- Heading -->
+        <div class="sidebar-heading">일정</div>
 
-            <!-- Divider -->
-            <hr class="sidebar-divider">
+        <!-- Nav Item - Upload -->
+        <li class="nav-item">
+          <a class="nav-link" href="/upload">
+            <i class="fas fa-fw fa-chart-area"></i>
+            <span>일정 생성</span></a
+          >
+        </li>
 
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                일정
-            </div>
+        <!-- Nav Item - Schedules -->
+        <li class="nav-item active">
+          <a class="nav-link" href="/schedules">
+            <i class="fas fa-fw fa-cog"></i>
+            <span>일정 관리</span></a
+          >
+        </li>
 
-            <!-- Nav Item - Upload -->
-            <li class="nav-item">
-                <a class="nav-link" href="/upload">
-                    <i class="fas fa-fw fa-chart-area"></i>
-                    <span>일정 생성</span></a>
-            </li>
+        <!-- Divider -->
+        <hr class="sidebar-divider" />
 
-            <!-- Nav Item - Schedules -->
-            <li class="nav-item active">
-                <a class="nav-link" href="/schedules">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <span>일정 관리</span></a>
-            </li>
+        <!-- Heading -->
+        <div class="sidebar-heading">기사</div>
 
-            <!-- Divider -->
-            <hr class="sidebar-divider">
+        <!-- Nav Item - Register Truckers -->
+        <li class="nav-item">
+          <a class="nav-link" href="/registerTruckers">
+            <i class="fas fa-fw fa-chart-area"></i>
+            <span>기사 등록</span></a
+          >
+        </li>
 
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                기사
-            </div>
+        <!-- Nav Item - Truckers -->
+        <li class="nav-item">
+          <a class="nav-link" href="/truckers">
+            <i class="fas fa-fw fa-cog"></i>
+            <span>기사 관리</span></a
+          >
+        </li>
 
-            <!-- Nav Item - Register Truckers -->
-            <li class="nav-item">
-                <a class="nav-link" href="/registerTruckers">
-                    <i class="fas fa-fw fa-chart-area"></i>
-                    <span>기사 등록</span></a>
-            </li>
+        <!-- Divider -->
+        <hr class="sidebar-divider d-none d-md-block" />
 
-            <!-- Nav Item - Truckers -->
-            <li class="nav-item">
-                <a class="nav-link" href="/truckers">
-                    <i class="fas fa-fw fa-cog"></i>
-                    <span>기사 관리</span></a>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
-
-            <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
-            </div>
-
-        </ul>
-        <!-- End of Sidebar -->
-
-        <!-- Content Wrapper -->
-        <div id="content-wrapper" class="d-flex flex-column">
-
-            <!-- Main Content -->
-            <div id="content">
-
-                <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
-                    <!-- Sidebar Toggle (Topbar) -->
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                        <i class="fa fa-bars"></i>
-                    </button>
-
-                    <!-- Topbar Navbar -->
-                    <ul class="navbar-nav ml-auto">
-                        <!-- Nav Item - User Information -->
-                        <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
-                            </a>
-                            <!-- Dropdown - User Information -->
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Settings
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Activity Log
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
-                                </a>
-                            </div>
-                        </li>
-
-                    </ul>
-
-                </nav>
-                <!-- End of Topbar -->
-
-                <!-- Begin Page Content -->
-                <div class="container-fluid">
-
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">일정 관리</h1>
-                    </div>
-
-                    <form id="dateForm">
-                        <label for="date">기준 날짜 선택: </label>
-                        <input type="date" id="selectedDate" name="date" required>
-                    </form>
-
-                    <div id="scheduleResult" class="container-fluid"></div>
-
-                    <button id="scheduleCheck" class="btn btn-primary mt-3">일정 확인</button>
-
-                    <script>
-                        document.getElementById("scheduleCheck").addEventListener("click", function () {
-                            const baseDate = document.getElementById("selectedDate").value;
-                            fetch('/drivers/list')
-                                .then(response => response.json())
-                                .then(driverData => {
-                                    // Extract the driver results
-                                    const drivers = driverData.drivers;
-
-                                    // Create a driver map for quick lookup
-                                    const driverMap = drivers.reduce((acc, driver) => {
-                                        acc[driver.did] = driver;
-                                        return acc;
-                                    }, {});
-
-                                    // Now fetch the jobs data
-                                    return fetch(`/lists?date=${baseDate}`)
-                                        .then(response => response.json())
-                                        .then(jobData => {
-                                            const resultContainer = document.getElementById("scheduleResult");
-                                            let html = '<table class="table table-bordered"><thead><tr><td rowspan="2">기사명</td><td rowspan="2">차량 번호</td><th>일정</th><th>출발지</th><th>주소</th><th>도착지</th><th>주소</th></tr></thead><tbody>';
-
-                                            const jobs = jobData.list;
-                                            console.log(jobs);
-
-                                            // Group jobs by driver ID
-                                            const jobsByDriver = jobs.reduce((acc, job) => {
-                                                if (!acc[job.did]) {
-                                                    acc[job.did] = [];
-                                                }
-                                                acc[job.did].push(job);
-                                                return acc;
-                                            }, {});
-
-                                            // Iterate over each driver group and create table rows
-                                            Object.keys(jobsByDriver).forEach(did => {
-                                                const driverJobs = jobsByDriver[did];
-                                                const driver = driverMap[did];
-                                                const driverName = driver.name;
-                                                const carName = driver.lpnum;
-
-                                                driverJobs.sort((a, b) => a.sequence - b.sequence);
-
-                                                driverJobs.forEach((job, index) => {
-                                                    html += '<tr>';
-
-                                                    if (index === 0) {
-                                                        html += `<td rowspan="${driverJobs.length}">${driverName}</td>`;
-                                                        html += `<td rowspan="${driverJobs.length}">${carName}</td>`;
-                                                    }
-
-                                                    html += `<td>${job.sequence}</td>`;
-                                                    html += `<td>${job.dep_name}</td>`;
-                                                    html += `<td>${job.dep_address}</td>`;
-                                                    html += `<td>${job.dest_name}</td>`;
-                                                    html += `<td>${job.dest_address}</td>`;
-                                                    html += '</tr>';
-                                                });
-                                            });
-
-                                            html += '</tbody></table>';
-                                            resultContainer.innerHTML = html;
-                                        });
-                                })
-                                .catch(error => {
-                                    console.error('Error fetching data:', error);
-                                });
-                        });
-                    </script>
-
-                </div>
-                <!-- /.container-fluid -->
-
-            </div>
-            <!-- End of Main Content -->
-
-            <!-- Footer -->
-            <footer class="sticky-footer bg-white">
-                <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2024</span>
-                    </div>
-                </div>
-            </footer>
-            <!-- End of Footer -->
-
+        <!-- Sidebar Toggler (Sidebar) -->
+        <div class="text-center d-none d-md-inline">
+          <button class="rounded-circle border-0" id="sidebarToggle"></button>
         </div>
-        <!-- End of Content Wrapper -->
+      </ul>
+      <!-- End of Sidebar -->
 
+      <!-- Content Wrapper -->
+      <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="content">
+          <!-- Topbar -->
+          <nav
+            class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow"
+          >
+            <!-- Sidebar Toggle (Topbar) -->
+            <button
+              id="sidebarToggleTop"
+              class="btn btn-link d-md-none rounded-circle mr-3"
+            >
+              <i class="fa fa-bars"></i>
+            </button>
+
+            <!-- Topbar Navbar -->
+            <ul class="navbar-nav ml-auto">
+              <!-- Nav Item - User Information -->
+              <li class="nav-item dropdown no-arrow">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="userDropdown"
+                  role="button"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >
+                  <span class="mr-2 d-none d-lg-inline text-gray-600 small"
+                    >Douglas McGee</span
+                  >
+                </a>
+                <!-- Dropdown - User Information -->
+                <div
+                  class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                  aria-labelledby="userDropdown"
+                >
+                  <a class="dropdown-item" href="#">
+                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Profile
+                  </a>
+                  <a class="dropdown-item" href="#">
+                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Settings
+                  </a>
+                  <a class="dropdown-item" href="#">
+                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Activity Log
+                  </a>
+                  <div class="dropdown-divider"></div>
+                  <a
+                    class="dropdown-item"
+                    href="#"
+                    data-toggle="modal"
+                    data-target="#logoutModal"
+                  >
+                    <i
+                      class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"
+                    ></i>
+                    Logout
+                  </a>
+                </div>
+              </li>
+            </ul>
+          </nav>
+          <!-- End of Topbar -->
+
+          <!-- Include the Kakao Maps JavaScript API -->
+          <script
+            type="text/javascript"
+            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f24eb8a3943393c39e1e325df705c078"
+          ></script>
+
+          <!-- Begin Page Content -->
+          <div class="container-fluid">
+            <!-- Page Heading -->
+            <div
+              class="d-sm-flex align-items-center justify-content-between mb-4"
+            >
+              <h1 class="h3 mb-0 text-gray-800">일정 관리</h1>
+            </div>
+
+            <form id="dateForm">
+              <label for="date">기준 날짜 선택: </label>
+              <input type="date" id="selectedDate" name="date" required />
+            </form>
+
+            <button id="scheduleCheck" class="btn btn-primary mt-3">
+              일정 확인
+            </button>
+            <button id="checkMap" class="btn btn-secondary mt-3">
+              지도 확인
+            </button>
+            <p></p>
+            <div id="scheduleResult" class="container-fluid"></div>
+
+            <!-- Map Modal -->
+            <div
+              class="modal fade"
+              id="mapModal"
+              tabindex="-1"
+              role="dialog"
+              aria-labelledby="mapModalLabel"
+              aria-hidden="true"
+            >
+              <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="mapModalLabel">지도 확인</h5>
+                    <button
+                      type="button"
+                      class="close"
+                      data-dismiss="modal"
+                      aria-label="Close"
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <!-- Map Container -->
+                    <div id="mapContainer" style="height: 400px">
+                      <!-- Kakao map will be displayed here -->
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-dismiss="modal"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <script>
+              let allCoordinates = []; // Global variable to store coordinates
+
+              document
+                .getElementById("scheduleCheck")
+                .addEventListener("click", function () {
+                  const baseDate =
+                    document.getElementById("selectedDate").value;
+
+                  fetch("/drivers/list")
+                    .then((response) => response.json())
+                    .then((driverData) => {
+                      const drivers = driverData.drivers;
+                      const driverMap = drivers.reduce((acc, driver) => {
+                        acc[driver.did] = driver;
+                        return acc;
+                      }, {});
+
+                      return fetch(`/lists?date=${baseDate}`)
+                        .then((response) => response.json())
+                        .then((jobData) => {
+                          const resultContainer =
+                            document.getElementById("scheduleResult");
+                          let html =
+                            '<table class="table table-bordered"><thead><tr><td rowspan="2">기사명</td><td rowspan="2">차량 번호</td><th>일정</th><th>출발지</th><th>주소</th><th>도착지</th><th>주소</th></tr></thead><tbody>';
+
+                          const jobs = jobData.list;
+
+                          // Group jobs by driver ID
+                          const jobsByDriver = jobs.reduce((acc, job) => {
+                            if (!acc[job.did]) {
+                              acc[job.did] = [];
+                            }
+                            acc[job.did].push(job);
+                            return acc;
+                          }, {});
+
+                          // Iterate over each driver group and create table rows
+                          Object.keys(jobsByDriver).forEach((did) => {
+                            const driverJobs = jobsByDriver[did];
+                            const driver = driverMap[did];
+                            const driverName = driver.name;
+                            const carName = driver.lpnum;
+
+                            driverJobs.sort((a, b) => a.sequence - b.sequence);
+                            coordinates = []; // Reset the coordinates array
+
+                            driverJobs.map((job) => {
+                              dep_coord = [
+                                parseFloat(job.dep_lon),
+                                parseFloat(job.dep_lat),
+                              ];
+                              dest_coord = [
+                                parseFloat(job.dest_lon),
+                                parseFloat(job.dest_lat),
+                              ];
+                              if (dep_coord.length > 0) {
+                                coordinates.push(dep_coord);
+                              }
+                              if (dest_coord.length > 0) {
+                                coordinates.push(dest_coord);
+                              }
+                            });
+
+                            if (coordinates.length > 0) {
+                              allCoordinates.push(coordinates);
+                            }
+
+                            driverJobs.forEach((job, index) => {
+                              html += "<tr>";
+                              if (index === 0) {
+                                html += `<td rowspan="${driverJobs.length}">${driverName}</td>`;
+                                html += `<td rowspan="${driverJobs.length}">${carName}</td>`;
+                              }
+
+                              html += `<td>${job.sequence}</td>`;
+                              html += `<td>${job.dep_name}</td>`;
+                              html += `<td>${job.dep_address}</td>`;
+                              html += `<td>${job.dest_name}</td>`;
+                              html += `<td>${job.dest_address}</td>`;
+                              html += "</tr>";
+                            });
+                          });
+
+                          html += "</tbody></table>";
+                          resultContainer.innerHTML = html;
+                        });
+                    })
+                    .catch((error) => {
+                      console.error("Error fetching data:", error);
+                    });
+                });
+
+              document
+                .getElementById("checkMap")
+                .addEventListener("click", function () {
+                  // Show the map modal
+                  $("#mapModal").modal("show");
+                  console.log(allCoordinates);
+
+                  // Initialize Kakao Map once the modal is fully shown
+                  $("#mapModal").on("shown.bs.modal", function () {
+                    const mapContainer =
+                      document.getElementById("mapContainer");
+
+                    // Initialize the map
+                    const mapOption = {
+                      center: new kakao.maps.LatLng(35.950701, 128.250667), // Center coordinates
+                      level: 13, // Zoom level
+                    };
+
+                    const map = new kakao.maps.Map(mapContainer, mapOption);
+
+                    // Encode the coordinates data for the GET request
+                    const queryParam = encodeURIComponent(
+                      JSON.stringify(allCoordinates)
+                    );
+
+                    // Fetch the data for line paths
+                    fetch(`/map?cords=${queryParam}`)
+                      .then((response) => response.json())
+                      .then((data) => {
+                        const linePaths = data;
+
+                        // Check if linePaths is null, undefined, or empty
+                        if (!linePaths || linePaths.length === 0) {
+                          console.warn("No line paths found");
+                          return; // Exit if no data
+                        }
+
+                        // Array of colors for the polylines
+                        const colors = [
+                          "#FF0000",
+                          "#00FF00",
+                          "#0000FF",
+                          "#FFFF00",
+                          "#00FFFF",
+                          "#FF00FF",
+                          "#800000",
+                          "#008000",
+                          "#000080",
+                          "#808000",
+                          "#800080",
+                          "#008080",
+                          "#FF6347",
+                          "#ADFF2F",
+                          "#20B2AA",
+                          "#9370DB",
+                          "#FF4500",
+                          "#DA70D6",
+                          "#32CD32",
+                          "#4682B4",
+                          "#D2691E",
+                          "#FFD700",
+                          "#5F9EA0",
+                          "#FF69B4",
+                          "#8B0000",
+                          "#8B4513",
+                          "#2E8B57",
+                          "#FF1493",
+                          "#696969",
+                          "#708090",
+                        ];
+
+                        // Iterate through the linePaths to create polylines
+                        linePaths.forEach((path, index) => {
+                          // Skip iteration if the path is null or undefined
+                          if (!path) {
+                            console.warn(
+                              `Skipping null path at index ${index}`
+                            );
+                            return;
+                          }
+
+                          const latLngPath = path.map(
+                            (coord) => new kakao.maps.LatLng(coord[0], coord[1])
+                          );
+
+                          const polyline = new kakao.maps.Polyline({
+                            path: latLngPath, // Set path
+                            strokeWeight: 5, // Line thickness
+                            strokeColor: colors[index], // Line color (cycled through the colors array)
+                            strokeOpacity: 0.7, // Line opacity
+                            strokeStyle: "solid", // Line style
+                          });
+
+                          // Display the polyline on the map
+                          polyline.setMap(map);
+                        });
+
+                        // Trigger the map resize event to ensure proper rendering
+                        setTimeout(
+                          () => kakao.maps.event.trigger(map, "resize"),
+                          300
+                        );
+                      })
+                      .catch((error) =>
+                        console.error("Error fetching line paths:", error)
+                      );
+                  });
+                });
+            </script>
+          </div>
+          <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+          <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+              <span>Copyright &copy; Your Website 2024</span>
+            </div>
+          </div>
+        </footer>
+        <!-- End of Footer -->
+      </div>
+      <!-- End of Content Wrapper -->
     </div>
     <!-- End of Page Wrapper -->
 
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
+      <i class="fas fa-angle-up"></i>
     </a>
 
     <!-- Logout Modal-->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="/login">Logout</a>
-                </div>
-            </div>
+    <div
+      class="modal fade"
+      id="logoutModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+            <button
+              class="close"
+              type="button"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            Select "Logout" below if you are ready to end your current session.
+          </div>
+          <div class="modal-footer">
+            <button
+              class="btn btn-secondary"
+              type="button"
+              data-dismiss="modal"
+            >
+              Cancel
+            </button>
+            <a class="btn btn-primary" href="/login">Logout</a>
+          </div>
         </div>
+      </div>
     </div>
 
     <!-- Bootstrap core JavaScript-->
@@ -286,7 +512,5 @@
 
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
-
-</body>
-
+  </body>
 </html>

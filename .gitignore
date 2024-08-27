@@ -1,2 +1,5 @@
 node_modules/
 .env
+
+ML_MAP/regression_model/*
+ML_MAP/classification_model/*

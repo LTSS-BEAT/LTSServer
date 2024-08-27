@@ -15,7 +15,7 @@ def initialize_database_connection():
     try:
         connection = mysql.connector.connect(
             host=os.getenv('RDS_HOST'),
-            database=os.getenv('RDS_DB_ML'),
+            database=('map_db'),
             user=os.getenv('RDS_USER'),
             password=os.getenv('RDS_PASSWORD')
         )
